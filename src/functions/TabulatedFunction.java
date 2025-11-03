@@ -25,6 +25,4 @@ public interface TabulatedFunction {
     void deletePoint(int index);
 
     void addPoint(FunctionPoint point) throws InappropriateFunctionPointException;
-
-
 }

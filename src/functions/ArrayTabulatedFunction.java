@@ -134,8 +134,11 @@ public class ArrayTabulatedFunction implements TabulatedFunction {
 
         for (index = 0; index < sizeValue && pointValue[index].getX() < point.getX(); index++);
 
-        if(index != sizeValue && pointValue[index].getX() == point.getX()){
-            throw new InappropriateFunctionPointException("есть точка, абсцисса которой совпадает с абсциссой добавляемой точки");
+        if (index != sizeValue) {
+            double existingX = pointValue[index].getX();
+            if (Math.abs(existingX - point.getX()) < 1e-10) {
+                throw new InappropriateFunctionPointException("есть точка, абсцисса которой совпадает с абсциссой добавляемой точки");
+            }
         }
         else {
             System.arraycopy(pointValue, index, pointValue, index+1, sizeValue-index);

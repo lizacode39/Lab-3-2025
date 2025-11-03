@@ -86,7 +86,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         return newNode;
     }
 
-    private void deleteNodeByIndex(int index){
+    private FunctionNode deleteNodeByIndex(int index){
         isFunctionPointIndexOutOfBoundsException(index);
         if (sizeValue < 3){
             throw new IllegalStateException();
@@ -95,6 +95,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         deleteNode.prev.next = deleteNode.next;
         deleteNode.next.prev = deleteNode.prev;
         --sizeValue;
+        return deleteNode;
     }
 
     public LinkedListTabulatedFunction(double leftX, double rightX, int pointCount){
@@ -146,7 +147,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
 
     public FunctionPoint getPoint(int index){
         isFunctionPointIndexOutOfBoundsException(index);
-        return getNodeByIndex(index).point;
+        return new FunctionPoint(getNodeByIndex(index).point);
     }
 
     public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException {
@@ -194,16 +195,28 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
     }
 
     public double getFunctionValue(double x){
-        int index;
-        if ((head.next.point.getX() <= x) && (x <= head.prev.point.getX())) {
-            for (index = 0; index < sizeValue && getPointX(index) < x; index++);
-            double x_1 = getPointX(index -1 );
-            double y_1 = getPointY(index-1);
-            double x_2 = getPointX(index);
-            double y_2 = getPointY(index);
-            return ((x - x_1) * (y_2 - y_1)) / (x_2 - x_1) + y_1;
+        if (x < head.next.point.getX() || x > head.prev.point.getX()) {
+            return Double.NaN;
         }
-        return Double.NaN;
+
+        int index = 0;
+        while (index < sizeValue && getNodeByIndex(index).point.getX() < x) {
+            index++;
+        }
+
+        if (index < sizeValue) {
+            double pointX = getNodeByIndex(index).point.getX();
+            if (Math.abs(pointX - x) < 1e-10) {
+                return getNodeByIndex(index).point.getY();
+            }
+        }
+
+        double x1 = getNodeByIndex(index - 1).point.getX();
+        double y1 = getNodeByIndex(index - 1).point.getY();
+        double x2 = getNodeByIndex(index).point.getX();
+        double y2 = getNodeByIndex(index).point.getY();
+
+        return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
     }
 
     public void deletePoint(int index){
@@ -215,8 +228,11 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         int index;
         for (index = 0; index < sizeValue && getPointX(index) < point.getX(); index++);
 
-        if(index != sizeValue && getNodeByIndex(index).point.getX() == point.getX()){
-            throw new InappropriateFunctionPointException("есть точка, абсцисса которой совпадает с абсциссой добавляемой точки");
+        if (index != sizeValue) {
+            double existingX = getNodeByIndex(index).point.getX();
+            if (Math.abs(existingX - point.getX()) < 1e-10) {
+                throw new InappropriateFunctionPointException("есть точка, абсцисса которой совпадает с абсциссой добавляемой точки");
+            }
         }
         else {
             addNodeByIndex(index).point = new FunctionPoint(point);
