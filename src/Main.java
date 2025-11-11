@@ -32,6 +32,19 @@ public class Main {
         }
 
         System.out.println("\nКОРРЕКТНОСТЬ РАБОТЫ");
+
+        System.out.println("\n УДАЛЕНИЕ ПЕРВОЙ ТОЧКИ (ИНДЕКС 0)");
+        System.out.println("До удаления: левая граница = " + func.getLeftDomainBorder());
+        func.deletePoint(0);
+        System.out.println("После удаления: левая граница = " + func.getLeftDomainBorder());
+
+        System.out.println("\nЗАМЕНА ТОЧКИ (ИНДЕКС 0)");
+        System.out.println("f(1.0) до замены = " + func.getFunctionValue(1.0));
+
+        func.setPointY(0, 999.0);
+        System.out.println("f(1.0) после замены = " + func.getFunctionValue(1.0));
+
+        System.out.println("\nДОБАВЛЕНИЕ ТОЧКИ");
         System.out.println("Добавляем точку (2.5, 100.0)");
         try {
             func.addPoint(new FunctionPoint(2.5, 100.0));
@@ -40,7 +53,7 @@ public class Main {
             System.out.println("Ошибка: " + e.getMessage());
         }
 
-        System.out.println("\nТочки после добавления:");
+        System.out.println("\nТОЧКИ ПОСЛЕ ИЗМЕНЕНИЙ");
         ((LinkedListTabulatedFunction) func).printList();
 
         System.out.println("\nf(2.5) = " + func.getFunctionValue(2.5));
