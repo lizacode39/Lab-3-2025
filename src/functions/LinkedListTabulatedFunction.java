@@ -224,19 +224,19 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
 
     }
 
-    public void addPoint(FunctionPoint point) throws InappropriateFunctionPointException{
-        int index;
-        for (index = 0; index < sizeValue && getPointX(index) < point.getX(); index++);
-
-        if (index != sizeValue) {
-            double existingX = getNodeByIndex(index).point.getX();
+    public void addPoint(FunctionPoint point) throws InappropriateFunctionPointException {
+        int index = 0;
+        while (index < sizeValue && getPointX(index) < point.getX()) {
+            index++;
+        }
+        if (index < sizeValue) {
+            double existingX = getPointX(index);
             if (Math.abs(existingX - point.getX()) < 1e-10) {
-                throw new InappropriateFunctionPointException("есть точка, абсцисса которой совпадает с абсциссой добавляемой точки");
+                throw new InappropriateFunctionPointException("Есть точка, абсцисса которой совпадает с абсциссой добавляемой точки");
             }
         }
-        else {
-            addNodeByIndex(index).point = new FunctionPoint(point);
-        }
+        addNodeByIndex(index).point = new FunctionPoint(point);
+        cacheIndex = -1;
     }
 
     public void printList(){
